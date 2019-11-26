@@ -17,11 +17,13 @@ public class MQSSL1 {
 
 
     public static void main(String[] args) throws MQException {
-        String channel = "C.S99.C";
-        int port = 5099;
-        String hostname = "192.168.60.27";
-        String sslCipherSuite = "TLS_RSA_WITH_AES_128_CBC_SHA";
-        String queueManageName = "QMGR.S99";
+
+//        System.setProperty("javax.net.debug", "ssl:handshake");
+        String channel = "Channel";
+        int port = 5556;
+        String hostname = "192.168.10.177";
+        String sslCipherSuite = "TLS_RSA_WITH_AES_256_CBC_SHA256";
+        String queueManageName = "ssldemo1";
 
         QueueManage queueManage = new QueueManage(queueManageName, hostname, channel, port, sslCipherSuite);
         queueManage.setName("administrator");
@@ -35,11 +37,12 @@ public class MQSSL1 {
 
     static MQQueueManager connect(QueueManage queueManage) throws MQException {
         //客户机的证书库
-        System.setProperty("javax.net.ssl.keyStore", "/Users/peixinyi/Desktop/S99_KEY/key.jks");
+        System.setProperty("javax.net.ssl.keyStore", "/Users/peixinyi/Desktop/Key/javaClient.keystore");
         System.setProperty("javax.net.ssl.keyStorePassword", "ewell123");
         //JVM的证书库
-        System.out.println(System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk-12.0.1.jdk/Contents/Home/lib/security/cacerts"));
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        System.setProperty("javax.net.ssl.trustStore", "/Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/jre/lib/security/cacerts");
+        System.setProperty("javax.net.ssl.trustStorePassword", "ewell123");
+        //TCP DEBUG
         //不使用IBM的JDK
         System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", "false");
         MQEnvironment.channel = queueManage.getChannel();
@@ -47,9 +50,7 @@ public class MQSSL1 {
         MQEnvironment.hostname = queueManage.getIp();
         MQEnvironment.CCSID = queueManage.getCCSID();
         MQEnvironment.userID = queueManage.getName();
-//        MQEnvironment.sslSocketFactory = SSLSocketFactory.getDefault();
         MQEnvironment.sslCipherSuite = queueManage.getSslCipherSuite();
-        MQEnvironment.sslPeerName = "CN=192.168.60.27";
         return new MQQueueManager(queueManage.getQueueManageName());
     }
 }
